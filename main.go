@@ -34,4 +34,6 @@ func main() {
 	for i := 0; i < len(durations); i++ {
 		fmt.Printf("Iteration #%v: %v\n", i, durations[i])
 	}
+
+	fmt.Scanln()
 }
