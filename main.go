@@ -6,18 +6,44 @@ import (
 	"time"
 )
 
+const (
+	SizeGb = 1024 * 1024 * 1024
+	SizeMb = 1024 * 1024
+	SizeKb = 1024
+)
+
 func main() {
-	bufferSize := 1024 * 1024 * 1024 * 8
+	fmt.Printf("%d, %v\n", 1, randRead(SizeKb*1))
+	fmt.Printf("%d, %v\n", 2, randRead(SizeKb*2))
+	fmt.Printf("%d, %v\n", 4, randRead(SizeKb*4))
+	fmt.Printf("%d, %v\n", 8, randRead(SizeKb*8))
+	fmt.Printf("%d, %v\n", 16, randRead(SizeKb*16))
+	fmt.Printf("%d, %v\n", 32, randRead(SizeKb*32))
+	fmt.Printf("%d, %v\n", 64, randRead(SizeKb*64))
+	fmt.Printf("%d, %v\n", 128, randRead(SizeKb*128))
+	fmt.Printf("%d, %v\n", 256, randRead(SizeKb*256))
+	fmt.Printf("%d, %v\n", 2000, randRead(SizeMb*2))
+	fmt.Printf("%d, %v\n", 4000, randRead(SizeMb*4))
+	fmt.Printf("%d, %v\n", 8000, randRead(SizeMb*8))
+	fmt.Printf("%d, %v\n", 1000000, randRead(SizeGb*1))
+	fmt.Printf("%d, %v\n", 2000000, randRead(SizeGb*2))
+}
+
+func randRead(bufferSize int) float64 {
 	iterations := 10
-	accessCount := 10000000
-	buffer := make([]byte, 1024*1024*1024*8)
+	accessCount := 10 * 1000 * 1000
+	buffer := make([]byte, bufferSize)
 	durations := make([]time.Duration, 0)
 	rand.Seed(time.Now().UnixNano())
+
+	for i := 0; i < bufferSize; i++ {
+		buffer[i] = 0
+	}
 
 	for i := 0; i < iterations; i++ {
 		start := time.Now()
 		for j := 0; j < accessCount; j++ {
-			buffer[rand.Intn(bufferSize)] = byte(rand.Intn(128))
+			buffer[rand.Intn(bufferSize)] = byte(72)
 		}
 		duration := time.Since(start)
 		durations = append(durations, duration)
@@ -28,12 +54,6 @@ func main() {
 		total = total + durations[i]
 	}
 
-	avg := int(total.Milliseconds()) / len(durations)
-	fmt.Printf("Average latency in milliseconds: %v \n\n", avg)
-
-	for i := 0; i < len(durations); i++ {
-		fmt.Printf("Iteration #%v: %v\n", i, durations[i])
-	}
-
-	fmt.Scanln()
+	avg := float64(total.Milliseconds()) / float64(len(durations))
+	return avg
 }
