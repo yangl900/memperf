@@ -25,12 +25,18 @@ func main() {
 	fmt.Printf("%d, %v\n", 2000, randRead(SizeMb*2))
 	fmt.Printf("%d, %v\n", 4000, randRead(SizeMb*4))
 	fmt.Printf("%d, %v\n", 8000, randRead(SizeMb*8))
+	fmt.Printf("%d, %v\n", 16000, randRead(SizeMb*16))
+	fmt.Printf("%d, %v\n", 32000, randRead(SizeMb*32))
+	fmt.Printf("%d, %v\n", 64000, randRead(SizeMb*64))
+	fmt.Printf("%d, %v\n", 128000, randRead(SizeMb*128))
+	fmt.Printf("%d, %v\n", 256000, randRead(SizeMb*256))
+	fmt.Printf("%d, %v\n", 512000, randRead(SizeMb*512))
 	fmt.Printf("%d, %v\n", 1000000, randRead(SizeGb*1))
 	fmt.Printf("%d, %v\n", 2000000, randRead(SizeGb*2))
 }
 
 func randRead(bufferSize int) float64 {
-	iterations := 10
+	iterations := 15
 	accessCount := 10 * 1000 * 1000
 	buffer := make([]byte, bufferSize)
 	durations := make([]time.Duration, 0)
