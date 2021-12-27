@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	linuxproc "github.com/c9s/goprocinfo/linux"
 )
 
 const (
@@ -13,29 +15,38 @@ const (
 )
 
 func main() {
-	fmt.Printf("%d, %v\n", 1, randRead(SizeKb*1))
-	fmt.Printf("%d, %v\n", 2, randRead(SizeKb*2))
-	fmt.Printf("%d, %v\n", 4, randRead(SizeKb*4))
-	fmt.Printf("%d, %v\n", 8, randRead(SizeKb*8))
-	fmt.Printf("%d, %v\n", 16, randRead(SizeKb*16))
-	fmt.Printf("%d, %v\n", 32, randRead(SizeKb*32))
-	fmt.Printf("%d, %v\n", 64, randRead(SizeKb*64))
-	fmt.Printf("%d, %v\n", 128, randRead(SizeKb*128))
-	fmt.Printf("%d, %v\n", 256, randRead(SizeKb*256))
-	fmt.Printf("%d, %v\n", 2000, randRead(SizeMb*2))
-	fmt.Printf("%d, %v\n", 4000, randRead(SizeMb*4))
-	fmt.Printf("%d, %v\n", 8000, randRead(SizeMb*8))
-	fmt.Printf("%d, %v\n", 16000, randRead(SizeMb*16))
-	fmt.Printf("%d, %v\n", 32000, randRead(SizeMb*32))
-	fmt.Printf("%d, %v\n", 64000, randRead(SizeMb*64))
-	fmt.Printf("%d, %v\n", 128000, randRead(SizeMb*128))
-	fmt.Printf("%d, %v\n", 256000, randRead(SizeMb*256))
-	fmt.Printf("%d, %v\n", 512000, randRead(SizeMb*512))
-	fmt.Printf("%d, %v\n", 1000000, randRead(SizeGb*1))
-	fmt.Printf("%d, %v\n", 2000000, randRead(SizeGb*2))
+	info, err := linuxproc.ReadCPUInfo("/proc/cpuinfo")
+	if err != nil {
+		fmt.Printf("Warning: failed to read cpuinfo: %s\n", err)
+	} else {
+		fmt.Printf("CPU Model: %s\n", info.Processors[0].ModelName)
+		fmt.Printf("Total Cores: %d\n", info.NumCore())
+	}
+
+	fmt.Printf("Buffer(KB), Latency(ms)\n")
+	fmt.Printf("%d, %.3f\n", 1, randWrite(SizeKb*1))
+	fmt.Printf("%d, %.3f\n", 2, randWrite(SizeKb*2))
+	fmt.Printf("%d, %.3f\n", 4, randWrite(SizeKb*4))
+	fmt.Printf("%d, %.3f\n", 8, randWrite(SizeKb*8))
+	fmt.Printf("%d, %.3f\n", 16, randWrite(SizeKb*16))
+	fmt.Printf("%d, %.3f\n", 32, randWrite(SizeKb*32))
+	fmt.Printf("%d, %.3f\n", 64, randWrite(SizeKb*64))
+	fmt.Printf("%d, %.3f\n", 128, randWrite(SizeKb*128))
+	fmt.Printf("%d, %.3f\n", 256, randWrite(SizeKb*256))
+	fmt.Printf("%d, %.3f\n", 2000, randWrite(SizeMb*2))
+	fmt.Printf("%d, %.3f\n", 4000, randWrite(SizeMb*4))
+	fmt.Printf("%d, %.3f\n", 8000, randWrite(SizeMb*8))
+	fmt.Printf("%d, %.3f\n", 16000, randWrite(SizeMb*16))
+	fmt.Printf("%d, %.3f\n", 32000, randWrite(SizeMb*32))
+	fmt.Printf("%d, %.3f\n", 64000, randWrite(SizeMb*64))
+	fmt.Printf("%d, %.3f\n", 128000, randWrite(SizeMb*128))
+	fmt.Printf("%d, %.3f\n", 256000, randWrite(SizeMb*256))
+	fmt.Printf("%d, %.3f\n", 512000, randWrite(SizeMb*512))
+	fmt.Printf("%d, %.3f\n", 768000, randWrite(SizeMb*768))
+	fmt.Printf("%d, %.3f\n", 1000000, randWrite(SizeGb*1))
 }
 
-func randRead(bufferSize int) float64 {
+func randWrite(bufferSize int) float64 {
 	iterations := 15
 	accessCount := 10 * 1000 * 1000
 	buffer := make([]byte, bufferSize)
