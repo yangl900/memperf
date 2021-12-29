@@ -23,6 +23,14 @@ func main() {
 		fmt.Printf("Total Cores: %d\n", info.NumCore())
 	}
 
+	fmt.Printf("Hashsize(million), Latency(ms)\n")
+	fmt.Printf("%d, %.3f\n", 1, hashTable(1*SizeMb))
+	fmt.Printf("%d, %.3f\n", 2, hashTable(2*SizeMb))
+	fmt.Printf("%d, %.3f\n", 5, hashTable(5*SizeMb))
+	fmt.Printf("%d, %.3f\n", 10, hashTable(10*SizeMb))
+	fmt.Printf("%d, %.3f\n", 20, hashTable(20*SizeMb))
+	fmt.Printf("%d, %.3f\n", 30, hashTable(30*SizeMb))
+
 	fmt.Printf("Buffer(KB), Latency(ms)\n")
 	fmt.Printf("%d, %.3f\n", 1, randWrite(SizeKb*1))
 	fmt.Printf("%d, %.3f\n", 2, randWrite(SizeKb*2))
@@ -44,6 +52,36 @@ func main() {
 	fmt.Printf("%d, %.3f\n", 512000, randWrite(SizeMb*512))
 	fmt.Printf("%d, %.3f\n", 768000, randWrite(SizeMb*768))
 	fmt.Printf("%d, %.3f\n", 1000000, randWrite(SizeGb*1))
+}
+
+func hashTable(size int) float64 {
+	rand.Seed(time.Now().UnixNano())
+	iterations := 15
+
+	durations := make([]time.Duration, 0)
+	buffer := rand.Perm(size)
+	m := make(map[int]int, size)
+
+	for i := 0; i < size; i++ {
+		m[i] = 0
+	}
+
+	for i := 0; i < iterations; i++ {
+		start := time.Now()
+		for j := 0; j < size; j++ {
+			m[buffer[j]] = i
+		}
+		duration := time.Since(start)
+		durations = append(durations, duration)
+	}
+
+	total := time.Duration(0)
+	for i := 0; i < len(durations); i++ {
+		total = total + durations[i]
+	}
+
+	avg := float64(total.Milliseconds()) / float64(len(durations))
+	return avg
 }
 
 func randWrite(bufferSize int) float64 {
