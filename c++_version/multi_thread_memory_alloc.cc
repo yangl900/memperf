@@ -12,8 +12,8 @@
 using namespace std;
 
 long iterations = 1;
-long accessCount = 10ULL << 20;
-int threadCount = 8;
+long accessCount = 200;
+int threadCount = 10;
 
 atomic<int> readyCount;
 atomic<int> totalTime;
@@ -21,10 +21,6 @@ atomic<int> totalTime;
 
 double randWriteImpl(long size)
 {
-    void* mem; 
-    mem = (void*)malloc(size);
-    memset(mem, 0, size);
-
     readyCount++;
     while(readyCount != threadCount);
     int time = 0;
@@ -32,16 +28,16 @@ double randWriteImpl(long size)
     for (long i = 0; i < iterations; i++) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         for (long n = 0; n < accessCount; n++) {
-            long randnum = rand() % size;
-            ((char*)(mem))[randnum] = 'a';
+            void* mem; 
+            mem = (void*)malloc(size);
+            memset(mem, 0, size);
+            free(mem);
         }
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
         time += std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();     
     }
 
-
-    free(mem);
     totalTime += time;
     return time / iterations;
 }
@@ -80,18 +76,18 @@ int main(int argc, char const *argv[])
     // printf("%d, %.3f\n", 64, randWrite(SizeKb*64));
     // printf("%d, %.3f\n", 128, randWrite(SizeKb*128));
     // printf("%d, %.3f\n", 256, randWrite(SizeKb*256));
-    // printf("%d, %.3f\n", 2000, randWrite(SizeMb*2));
-    // printf("%d, %.3f\n", 4000, randWrite(SizeMb*4));
-    // printf("%d, %.3f\n", 8000, randWrite(SizeMb*8));
-    // printf("%d, %.3f\n", 16000, randWrite(SizeMb*16));
-    // printf("%d, %.3f\n", 32000, randWrite(SizeMb*32));
-    // printf("%d, %.3f\n", 64000, randWrite(SizeMb*64));
-    // printf("%d, %.3f\n", 128000, randWrite(SizeMb*128));
-    // printf("%d, %.3f\n", 256000, randWrite(SizeMb*256));
+    printf("%d, %.3f\n", 2000, randWrite(SizeMb*2));
+    printf("%d, %.3f\n", 4000, randWrite(SizeMb*4));
+    printf("%d, %.3f\n", 8000, randWrite(SizeMb*8));
+    printf("%d, %.3f\n", 16000, randWrite(SizeMb*16));
+    printf("%d, %.3f\n", 32000, randWrite(SizeMb*32));
+    printf("%d, %.3f\n", 64000, randWrite(SizeMb*64));
+    printf("%d, %.3f\n", 128000, randWrite(SizeMb*128));
+    printf("%d, %.3f\n", 256000, randWrite(SizeMb*256));
     // printf("%d, %.3f\n", 512000, randWrite(SizeMb*512));
     // printf("%d, %.3f\n", 768000, randWrite(SizeMb*768));
-    printf("%d, %.3f\n", 1000000, randWrite(SizeGb*1));
-    printf("%d, %.3f\n", 1000000, randWrite(SizeGb*5));
+    // printf("%d, %.3f\n", 1000000, randWrite(SizeGb*1));
+    // printf("%d, %.3f\n", 1000000, randWrite(SizeGb*5));
 
     // std::this_thread::sleep_for(std::chrono::seconds(1000));
     return 0;
