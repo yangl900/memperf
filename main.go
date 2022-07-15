@@ -23,13 +23,13 @@ func main() {
 		fmt.Printf("Total Cores: %d\n", info.NumCore())
 	}
 
-	fmt.Printf("Hashsize(million), Latency(ms)\n")
-	fmt.Printf("%d, %.3f\n", 1, hashTable(1*SizeMb))
-	fmt.Printf("%d, %.3f\n", 2, hashTable(2*SizeMb))
-	fmt.Printf("%d, %.3f\n", 5, hashTable(5*SizeMb))
-	fmt.Printf("%d, %.3f\n", 10, hashTable(10*SizeMb))
-	fmt.Printf("%d, %.3f\n", 20, hashTable(20*SizeMb))
-	fmt.Printf("%d, %.3f\n", 30, hashTable(30*SizeMb))
+	// fmt.Printf("Hashsize(million), Latency(ms)\n")
+	// fmt.Printf("%d, %.3f\n", 1, hashTable(1*SizeMb))
+	// fmt.Printf("%d, %.3f\n", 2, hashTable(2*SizeMb))
+	// fmt.Printf("%d, %.3f\n", 5, hashTable(5*SizeMb))
+	// fmt.Printf("%d, %.3f\n", 10, hashTable(10*SizeMb))
+	// fmt.Printf("%d, %.3f\n", 20, hashTable(20*SizeMb))
+	// fmt.Printf("%d, %.3f\n", 30, hashTable(30*SizeMb))
 
 	fmt.Printf("Buffer(KB), Latency(ms)\n")
 	fmt.Printf("%d, %.3f\n", 1, randWrite(SizeKb*1))
