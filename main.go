@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	linuxproc "github.com/c9s/goprocinfo/linux"
@@ -51,7 +53,7 @@ func main() {
 	fmt.Printf("%d, %.3f\n", 256000, randWrite(SizeMb*256))
 	fmt.Printf("%d, %.3f\n", 512000, randWrite(SizeMb*512))
 	fmt.Printf("%d, %.3f\n", 768000, randWrite(SizeMb*768))
-	fmt.Printf("%d, %.3f\n", 1000000, randWrite(SizeGb*1))
+	// fmt.Printf("%d, %.3f\n", 1000000, randWrite(SizeGb*1))
 }
 
 func hashTable(size int) float64 {
@@ -85,8 +87,24 @@ func hashTable(size int) float64 {
 }
 
 func randWrite(bufferSize int) float64 {
-	iterations := 15
-	accessCount := 10 * 1000 * 1000
+	var n int32
+	var wg sync.WaitGroup
+	for i := 0; i < 8; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			result := int32(randWriteInternal(bufferSize))
+			atomic.AddInt32(&n, result)
+		}()
+	}
+
+	wg.Wait()
+	return float64(n) / 8.0
+}
+
+func randWriteInternal(bufferSize int) float64 {
+	iterations := 2
+	accessCount := 1 * 1000 * 1000
 	buffer := make([]byte, bufferSize)
 	durations := make([]time.Duration, 0)
 	rand.Seed(time.Now().UnixNano())
